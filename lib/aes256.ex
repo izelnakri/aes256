@@ -42,7 +42,7 @@ defmodule AES256 do
 
     target = if options[:base64], do: Base.decode64!(ciphertext_with_iv), else: ciphertext_with_iv
 
-    {iv, target_ciphertext} = String.split_at(target, 16)
+    {iv, target_ciphertext} = split_at(target, 16)
 
     padded = :crypto.block_decrypt(:aes_cbc256, key, iv, target_ciphertext)
     {:ok, plaintext} = pkcs7_unpad(padded)
@@ -82,5 +82,12 @@ defmodule AES256 do
     else
       :error
     end
+  end
+
+  defp split_at(binary, position) do
+    {
+      Kernel.binary_part(binary, 0, position),
+      Kernel.binary_part(binary, position, byte_size(binary) - position)
+    }
   end
 end
