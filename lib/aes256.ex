@@ -41,7 +41,7 @@ defmodule AES256 do
     key = :crypto.hash(:sha256, password)
     target = if options[:base64], do: Base.decode64!(ciphertext_with_iv, mixed: true), else: ciphertext_with_iv
 
-    {iv, target_ciphertext} = String.split_at(target, 16)
+    {iv, target_ciphertext} = split_at(target, 16)
 
     padded = :crypto.block_decrypt(:aes_cbc, key, iv, target_ciphertext)
 
@@ -82,5 +82,12 @@ defmodule AES256 do
     else
       :error
     end
+  end
+
+  defp split_at(binary, position) do
+    {
+      Kernel.binary_part(binary, 0, position),
+      Kernel.binary_part(binary, position, byte_size(binary) - position)
+    }
   end
 end
