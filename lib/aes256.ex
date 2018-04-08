@@ -27,7 +27,7 @@ defmodule AES256 do
   end
   def decrypt(ciphertext, password, iv, options) do
     key = :crypto.hash(:sha256, password)
-    target = if options[:base64], do: Base.decode64!(ciphertext), else: ciphertext
+    target = if options[:base64], do: Base.decode64!(ciphertext, mixed: true), else: ciphertext
 
     padded = :crypto.block_decrypt(:aes_cbc256, key, iv, target)
 
@@ -39,12 +39,12 @@ defmodule AES256 do
 
   def decrypt!(ciphertext_with_iv, password, options \\ [mode: :cbc, base64: true]) do
     key = :crypto.hash(:sha256, password)
-
-    target = if options[:base64], do: Base.decode64!(ciphertext_with_iv), else: ciphertext_with_iv
+    target = if options[:base64], do: Base.decode64!(ciphertext_with_iv, mixed: true), else: ciphertext_with_iv
 
     {iv, target_ciphertext} = String.split_at(target, 16)
 
-    padded = :crypto.block_decrypt(:aes_cbc256, key, iv, target_ciphertext)
+    padded = :crypto.block_decrypt(:aes_cbc, key, iv, target_ciphertext)
+
     {:ok, plaintext} = pkcs7_unpad(padded)
 
     plaintext
