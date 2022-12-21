@@ -1,7 +1,7 @@
 defmodule Aes256.Mixfile do
   use Mix.Project
 
-  @version "0.6.6"
+  @version "0.5.5"
   @source_url "https://github.com/izelnakri/aes256"
 
   def project() do
